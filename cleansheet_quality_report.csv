@@ -1,4 +1,0 @@
-Column,Issue,Count,Percentage,Severity
-Age,Missing values,177,19.87,MEDIUM
-Cabin,Missing values,687,77.1,HIGH
-Embarked,Missing values,2,0.22,LOW
