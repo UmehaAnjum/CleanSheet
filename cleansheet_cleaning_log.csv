@@ -1,0 +1,4 @@
+Action,Affected
+Remove duplicate rows,0
+Replace invalid values in Age with missing,0
+Fill missing Age with median,177
