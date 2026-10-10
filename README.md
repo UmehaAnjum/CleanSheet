@@ -1,20 +1,33 @@
-# CleanSheet
-A Python-based CSV Data Quality Auditor & Cleaner that detects data issues, generates quality reports, and helps clean datasets by handling missing values, duplicates, invalid ages, and invalid emails.
 # CleanSheet — CSV Data Quality Auditor & Cleaner
 
-## Overview
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/UmehaAnjum/CleanSheet/blob/main/notebooks/cleansheet_data_quality_auditor_and_cleaner.ipynb)
 
-CleanSheet is a Python-based tool that detects common data quality issues in CSV datasets and helps users clean their data using configurable cleaning rules.
+CleanSheet is a Python/pandas notebook that detects common data-quality issues in CSV datasets and cleans them using configurable rules. It generates a quality report, applies the selected cleaning operations to a **copy** of the data, and exports the cleaned dataset together with a cleaning log.
 
-The project was developed using Python, Pandas, and Google Colab. It aims to make data quality checking and basic data cleaning easier, more organized, and accessible to users.
+It was built with Python, pandas, and Google Colab as a learning and demonstration project.
 
-CleanSheet generates a quality report, applies selected cleaning operations to a copy of the original dataset, and exports the cleaned data and cleaning log as downloadable files.
+## Repository Structure
+
+```
+CleanSheet/
+├── notebooks/
+│   └── cleansheet_data_quality_auditor_and_cleaner.ipynb   # The CleanSheet notebook
+├── data/
+│   └── train.csv                  # Input: Titanic training dataset (891 rows, 12 columns)
+├── outputs/                       # Results of the tested run on train.csv
+│   ├── cleansheet_cleaned.csv
+│   ├── cleansheet_quality_report.csv
+│   └── cleansheet_cleaning_log.csv
+├── requirements.txt
+├── .gitignore
+└── README.md
+```
 
 ## Features
 
-### 1. Data Quality Auditing
+### 1. Data quality auditing
 
-CleanSheet checks CSV datasets for common data quality problems, including:
+CleanSheet checks a dataset for:
 
 - Missing values
 - Duplicate rows
@@ -23,80 +36,78 @@ CleanSheet checks CSV datasets for common data quality problems, including:
 - Invalid age values
 - Invalid email formats
 
-It generates a structured quality report containing:
+The quality report contains the column name, issue detected, number of affected records, percentage of affected records, and severity (`HIGH` ≥ 50%, `MEDIUM` ≥ 10%, otherwise `LOW`).
 
-- Column name
-- Issue detected
-- Number of affected records
-- Percentage of affected records
-- Severity level
+### 2. Data cleaning
 
-### 2. Data Cleaning
+| Option | Default | Behaviour |
+|---|---|---|
+| Remove duplicate rows | on | Drops exact duplicate rows |
+| Validate ages | on | Ages below 0 or above 120 become missing values |
+| Validate email formats | on | Invalid email formats become missing values |
+| Fill missing numeric values | on | Fills with the column median |
+| Fill missing text values | off | Fills with the column mode |
 
-CleanSheet supports configurable cleaning operations:
+Cleaning always runs on a separate copy, so the original DataFrame is left unchanged.
 
-- **Duplicate removal:** Removes duplicate rows when enabled.
-- **Missing numeric values:** Fills missing numeric values using the column median when enabled.
-- **Missing categorical values:** Optionally fills missing categorical values using the column mode.
-- **Age validation:** Treats ages below 0 or above 120 as invalid.
-- **Email validation:** Detects basic email-format errors in applicable columns.
-- **Original data preservation:** Performs cleaning on a separate copy of the input DataFrame.
+### 3. Interactive controls
 
-### 3. Interactive Cleaning Options
+In Google Colab the options above appear as `ipywidgets` checkboxes. Click **Clean My Dataset** to run, then **Download All CleanSheet Outputs** to download a ZIP of the results.
 
-Users can select cleaning operations through interactive checkboxes in Google Colab.
-
-Available options:
-
-- Remove duplicate rows
-- Fill missing numeric values with the median
-- Fill missing text values with the mode
-- Validate ages (0–120)
-- Validate email formats
-
-This allows users to customize the cleaning process according to their needs.
-
-### 4. Export and Download
-
-CleanSheet generates the following output files:
+### 4. Output files
 
 | File | Purpose |
 |---|---|
-| `cleansheet_cleaned.csv` | Contains the dataset after selected cleaning operations |
-| `cleansheet_quality_report.csv` | Reports data quality issues detected before cleaning |
-| `cleansheet_cleaning_log.csv` | Records cleaning actions and affected counts |
-| `cleansheet_outputs.zip` | Contains all three output files |
+| `cleansheet_cleaned.csv` | Dataset after the selected cleaning operations |
+| `cleansheet_quality_report.csv` | Issues detected in the original dataset, before cleaning |
+| `cleansheet_cleaning_log.csv` | Cleaning actions and the number of records affected |
+| `cleansheet_outputs.zip` | Created by the download button; contains the three files above |
 
 ## How It Works
 
-The workflow follows these steps:
-
 1. Load a CSV dataset into the notebook.
-2. Inspect the dataset and identify data quality issues.
-3. Generate a quality report describing the original dataset.
+2. Inspect the dataset and identify data-quality issues.
+3. Generate a quality report for the original dataset.
 4. Select the desired cleaning operations.
 5. Apply the selected rules to a copy of the dataset.
 6. Generate a cleaning log.
 7. Export the cleaned dataset and reports.
-8. Download all outputs in a ZIP file.
+8. Download all outputs as a ZIP file.
 
-## Technologies Used
+## Getting Started
 
-- **Python** — Core programming language
-- **Pandas** — Data manipulation, validation, and cleaning
-- **Google Colab** — Development and execution environment
-- **IPyWidgets** — Interactive cleaning controls
-- **CSV and ZIP utilities** — Output generation and download
+### Option A — Google Colab (recommended)
+
+The notebook was written for Colab and uses Colab's `/content/` working directory and `google.colab.files` for downloads.
+
+1. Click the **Open In Colab** badge above (or upload the notebook from `notebooks/` to Colab).
+2. Upload `data/train.csv` (or your own CSV) to the Colab runtime so it is available at `/content/train.csv`. To use a different file, edit the `pd.read_csv(...)` path in the first cell.
+3. Run the cells in order.
+4. Review the quality report and choose your cleaning options.
+5. Click **Clean My Dataset**, then **Download All CleanSheet Outputs**.
+
+### Option B — Local Jupyter
+
+```bash
+git clone https://github.com/UmehaAnjum/CleanSheet.git
+cd CleanSheet
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+jupyter lab
+```
+
+The notebook still contains Colab-specific code: the `/content/...` file paths and the `google.colab.files` download cells. When running locally, change the paths (for example to `../data/train.csv` and `../outputs/`) and skip the download cells.
+
+> **Note:** The notebook redefines `generate_quality_warnings` in a later cell with added age and email checks. Run the cells in order so the final definition is the one used.
 
 ## Dataset Testing
 
-The project was tested using the Titanic training dataset and a synthetic dataset containing known data quality issues.
+CleanSheet was tested on the Titanic training dataset and on a small synthetic dataset with known issues.
 
-### Titanic Dataset Results
+### Titanic results (`data/train.csv` → `outputs/`)
 
-The Titanic training dataset contained 891 rows and 12 columns.
-
-The original quality report identified the following missing values:
+The dataset has 891 rows and 12 columns. The quality report found:
 
 | Column | Issue | Count | Percentage | Severity |
 |---|---|---:|---:|---|
@@ -104,51 +115,32 @@ The original quality report identified the following missing values:
 | Cabin | Missing values | 687 | 77.10% | HIGH |
 | Embarked | Missing values | 2 | 0.22% | LOW |
 
-During the tested cleaning run:
+In the tested cleaning run:
 
-- The original dataset contained 891 rows.
-- The cleaned dataset contained 891 rows.
-- No duplicate rows were removed.
-- The 177 missing Age values were filled using the median.
-- Missing Cabin and Embarked values remained because categorical filling was disabled.
+- The cleaned dataset kept all 891 rows; no duplicates were found.
+- The 177 missing `Age` values were filled with the median.
+- Missing `Cabin` and `Embarked` values remained because categorical filling was disabled.
 
-### Synthetic Dataset Testing
+### Synthetic dataset
 
-A small test dataset was created with duplicate rows, missing ages, invalid ages, missing emails, and an invalid email format.
+A small dataset with duplicate rows, a missing age, invalid ages, a missing email, and a malformed email verified that:
 
-The tests verified that:
-
-- Duplicate rows could be removed.
-- Invalid ages could be handled.
-- Invalid email formats could be replaced with missing values.
-- Missing numeric values could be filled using the median.
-- Users could customize cleaning options.
-- The original DataFrame remained unchanged.
-
-## How to Run the Project
-
-1. Open the project notebook in Google Colab.
-2. Upload the notebook if it is not already available in your Drive.
-3. Upload your CSV dataset or update the dataset-loading code to point to your file.
-4. Run the notebook cells in order.
-5. Review the generated quality report.
-6. Select your preferred cleaning options.
-7. Click **Clean My Dataset**.
-8. Click **Download All CleanSheet Outputs** to download the generated files.
-
-**Important:** If the notebook loads `/content/train.csv`, that file must be uploaded to the Colab runtime first, or the loading code must be updated to use your own CSV file. The interactive workflow uses the DataFrame stored in `df`.
+- Duplicate rows can be removed.
+- Invalid ages are handled.
+- Invalid email formats are replaced with missing values.
+- Missing numeric values are filled with the median.
+- Cleaning options can be customised.
+- The original DataFrame remains unchanged.
 
 ## Limitations
 
-- Cleaning operations use predefined rules and may not suit every dataset.
-- Median filling is not appropriate for every numeric column.
-- Mode filling may not be appropriate for every categorical column.
-- Basic email-format validation does not verify whether an email address exists.
-- Age validation applies to columns named `Age`, regardless of capitalization.
-- Email validation applies to columns whose names contain `email`.
-- Invalid values may become missing values before the selected filling operation is applied.
-- The quality report describes issues found in the original dataset; a separate post-cleaning audit would be needed to summarize all remaining issues.
-- Users should review the cleaned output before using it for important decisions.
+- Cleaning uses predefined rules and may not suit every dataset.
+- Median filling is not appropriate for every numeric column, and mode filling is not appropriate for every categorical column.
+- Email validation only checks basic format; it does not verify that an address exists.
+- Age cleaning applies to columns named `Age` (case-insensitive); email cleaning applies to columns whose names contain `email`. The audit and quality report check only columns named exactly `Age` and `Email`.
+- Invalid values become missing values before the selected filling operation is applied.
+- The quality report describes the original dataset only; a separate post-cleaning audit would be needed to summarise remaining issues.
+- Review the cleaned output before using it for important decisions.
 
 ## Future Improvements
 
@@ -162,7 +154,3 @@ The tests verified that:
 ## Author
 
 **Umeha Anjum**
-
-
-
-CleanSheet is a learning and demonstration project focused on data quality auditing and configurable CSV cleaning. The project preserves the original input DataFrame and creates separate output files for the cleaned data and reports.
