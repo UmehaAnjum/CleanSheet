@@ -1,5 +1,5 @@
 # CleanSheet
-A Python-based CSV Data Quality Auditor that detects missing values, duplicate rows, invalid ages, and invalid emails, and generates quality reports.
+A Python-based CSV Data Quality Auditor & Cleaner that detects data issues, generates quality reports, and helps clean datasets by handling missing values, duplicates, invalid ages, and invalid emails.
 # CleanSheet — CSV Data Quality Auditor & Cleaner
 
 ## Overview
